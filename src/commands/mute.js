@@ -3,21 +3,21 @@ const moment = require("moment");
 const ms = require("ms");
 
 module.exports = (client, message) => {
-  if(message.member.permissions.has("MUTE_MEMBERS")) {
+  if (message.member.permissions.has("MUTE_MEMBERS")) {
     let arguments = message.content.split("mute ")[1].split(" ");
-    if(arguments[0]) {
-      if(arguments[0].includes("#")) {
+    if (arguments[0]) {
+      let global = false;
+      if (arguments.find(x => x === "-g")) {
+        arguments = arguments.filter(x => x !== "-g");
+        global = true;
+      }
+      if (arguments[0].includes("#")) {
         const user = client.users.cache.find(user => user.tag === arguments[0]);
-        if(user) {
+        if (user) {
           let end;
-          let global = false;
-          if(arguments.find(x => x === "-g")) {
-            arguments = arguments.filter(x => x !== "-g");
-            global = true;
-          }
-          if(arguments[1]) {
+          if (arguments[1]) {
             end = Date.now() + ms(arguments[1]);
-            if(!end) {
+            if (!end) {
               return message.reply({
                 content: "Invalid time"
               });
@@ -28,7 +28,7 @@ module.exports = (client, message) => {
           const mute = {
             end: end
           }
-          if(global) {
+          if (global) {
             let servers = db.get("servers");
             Object.values(servers).forEach((server) => {
               db.set(`servers.${server.guildID}.mutes.${user.id}`, mute);

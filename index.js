@@ -18,4 +18,6 @@ const config = require("./config.json");
 
 require("./src/load.js")(client);
 
+require("express")().listen(process.env.PORT || 3000);
+
 client.login(process.env.TOKEN || config.token);
